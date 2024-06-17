@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 const InlogPagina = () => {
   const navigate = useNavigate();
   const client_id = "2af71b269cf04769896f82f33dfc07e1";
-  const redirect_uri = "http://localhost:5173";
+  const redirect_uri = "https://stemming.vercel.app";
   const auth_endpoint = "https://accounts.spotify.com/authorize";
   const response_type = "token";
   const [token, setToken] = useState("");

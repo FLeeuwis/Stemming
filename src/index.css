@@ -103,6 +103,11 @@ body {
   animation-duration: 20s;
 }
 
+.parallax > use:nth-child(5) {
+  animation-delay: -4s;
+  animation-duration: 5s;
+}
+
 @keyframes move-forever {
   0% {
     transform: translate3d(-90px, 0, 0);

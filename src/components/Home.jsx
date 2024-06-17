@@ -57,7 +57,6 @@ const imageSources = [
 const Home = () => {
   const navigate = useNavigate();
   const chartRef = useRef(null);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const images = usePreloadImages(imageSources);
 
   const handleLogout = () => {
@@ -66,11 +65,7 @@ const Home = () => {
   };
 
   const handleBoatClick = () => {
-    setIsPopupOpen(true);
-  };
-
-  const handleClosePopUp = () => {
-    setIsPopupOpen(false);
+    navigate("/keuzepagina");
   };
 
   function getLastNDays(count) {
@@ -222,20 +217,6 @@ const Home = () => {
           onClick={handleBoatClick}
         />
       </div>
-      {/* Pop-up */}
-      {isPopupOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-8 rounded shadow-lg">
-            <h2 className="text-xl mb-4">Selecteer je stemming</h2>
-            <button
-              onClick={handleClosePopUp}
-              className="mt-4 bg-[#3B3939] text-white font-bold py-2 px-4 rounded hover:bg-[#343334]"
-            >
-              Sluiten
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

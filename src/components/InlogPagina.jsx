@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 const InlogPagina = () => {
   const navigate = useNavigate();
   const client_id = "2af71b269cf04769896f82f33dfc07e1";
-  const redirect_uri = "https://stemming.vercel.app";
   const auth_endpoint = "https://accounts.spotify.com/authorize";
   const response_type = "token";
   const [token, setToken] = useState("");
@@ -119,9 +118,10 @@ const InlogPagina = () => {
   }, []);
 
   const handleLogin = () => {
-    const authUrl = `${auth_endpoint}?client_id=${client_id}&redirect_uri=${encodeURIComponent(
-      redirect_uri
-    )}&response_type=${response_type}`;
+    const redirect_uri = "https://stemming.vercel.app";
+    const encodedRedirectUri = encodeURIComponent(redirect_uri);
+    const authUrl = `${auth_endpoint}?client_id=${client_id}&redirect_uri=${encodedRedirectUri}&response_type=${response_type}`;
+
     window.location.href = authUrl;
   };
 

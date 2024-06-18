@@ -7,7 +7,6 @@ import Home from "./components/Home";
 import Stemming from "./components/Stemming";
 import AppLayout from "./pages/AppLayout";
 import ErrorLayout from "./pages/ErrorLayout";
-import KeuzePagina from "./components/KeuzePagina";
 
 const router = createBrowserRouter([
   {
@@ -25,10 +24,6 @@ const router = createBrowserRouter([
       {
         path: "/stemming",
         element: <Stemming />,
-      },
-      {
-        path: "/keuzepagina",
-        element: <KeuzePagina />,
       },
     ],
   },

@@ -65,7 +65,7 @@ const Home = () => {
   };
 
   const handleBoatClick = () => {
-    navigate("/keuzepagina");
+    navigate("/stemming");
   };
 
   function getLastNDays(count) {

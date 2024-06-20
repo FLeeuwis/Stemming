@@ -118,8 +118,7 @@ const InlogPagina = () => {
   }, []);
 
   const handleLogin = () => {
-    const redirect_uri =
-      "https://stemming-e5gi3a3h2-fleeuwis-projects.vercel.app/";
+    const redirect_uri = "https://stemming.vercel.app";
     const encodedRedirectUri = encodeURIComponent(redirect_uri);
     const authUrl = `${auth_endpoint}?client_id=${client_id}&redirect_uri=${encodedRedirectUri}&response_type=${response_type}`;
 

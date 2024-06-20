@@ -118,7 +118,7 @@ const InlogPagina = () => {
   }, []);
 
   const handleLogin = () => {
-    const redirect_uri = "https://stemming.vercel.app/";
+    const redirect_uri = "https://stemming.vercel.app";
     const encodedRedirectUri = encodeURIComponent(redirect_uri);
     const authUrl = `${auth_endpoint}?client_id=${client_id}&redirect_uri=${encodedRedirectUri}&response_type=${response_type}`;
 

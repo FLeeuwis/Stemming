@@ -12,6 +12,8 @@ import {
   Legend,
   Filler,
 } from "chart.js";
+import { db } from "../firebase"; // Zorg ervoor dat je Firebase hebt geconfigureerd
+import { collection, getDocs } from "firebase/firestore";
 
 ChartJS.register(
   CategoryScale,
@@ -58,6 +60,19 @@ const Home = () => {
   const navigate = useNavigate();
   const chartRef = useRef(null);
   const images = usePreloadImages(imageSources);
+  const [chartData, setChartData] = useState({
+    labels: getLastNDays(7),
+    datasets: [
+      {
+        label: "Stemmingen",
+        data: Array(7).fill(0), // Begin met een lege dataset
+        fill: false,
+        borderColor: "#FFBE17",
+        backgroundColor: "#FFBE17",
+        tension: 0.1,
+      },
+    ],
+  });
 
   const handleLogout = () => {
     window.localStorage.removeItem("token");
@@ -89,20 +104,62 @@ const Home = () => {
     return days.reverse();
   }
 
-  const labels = getLastNDays(7);
+  useEffect(() => {
+    const fetchStemmingen = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "stemmingen"));
+        const data = [];
+        querySnapshot.forEach((doc) => {
+          data.push(doc.data());
+        });
+        console.log("Fetched data from Firebase: ", data); // Debugging statement
+        processChartData(data);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    };
 
-  const data = {
-    labels: labels,
-    datasets: [
-      {
-        label: "oelalal",
-        data: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], // Corresponding to the number of images
-        fill: false,
-        borderColor: "#FFBE17",
-        backgroundColor: "#FFBE17",
-        tension: 0.1,
-      },
-    ],
+    const processChartData = (data) => {
+      // Verwerk de gegevens van Firebase naar een bruikbaar formaat voor de chart
+      const labels = getLastNDays(7);
+      const moodCounts = Array(labels.length).fill(0);
+
+      data.forEach((entry) => {
+        const date = new Date(entry.timestamp.seconds * 1000);
+        const dayName = getDayName(date);
+        const dayIndex = labels.indexOf(dayName);
+        if (dayIndex !== -1) {
+          moodCounts[dayIndex] += entry.mood; // Aannemende dat `entry.mood` de stemming waarde bevat
+        }
+      });
+
+      console.log("Processed chart data: ", moodCounts); // Debugging statement
+
+      setChartData((prevState) => ({
+        ...prevState,
+        datasets: [
+          {
+            ...prevState.datasets[0],
+            data: moodCounts,
+          },
+        ],
+      }));
+    };
+
+    fetchStemmingen();
+  }, []);
+
+  const getDayName = (date) => {
+    const daysOfWeek = [
+      "zondag",
+      "maandag",
+      "dinsdag",
+      "woensdag",
+      "donderdag",
+      "vrijdag",
+      "zaterdag",
+    ];
+    return daysOfWeek[date.getDay()];
   };
 
   const drawImagePlugin = {
@@ -161,7 +218,7 @@ const Home = () => {
           <div className="relative h-64 md:h-96">
             <Line
               ref={chartRef}
-              data={data}
+              data={chartData}
               options={options}
               plugins={[drawImagePlugin]}
             />

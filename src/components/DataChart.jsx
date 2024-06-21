@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import Chart from "chart.js/auto";
 
 const DataChart = () => {
   const [chartData, setChartData] = useState(null);
+  const [myChart, setMyChart] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,16 +26,16 @@ const DataChart = () => {
 
   const processData = (data) => {
     const imageCounts = {
-      "/images/cryingSmiley.png": 0,
-      "/images/angrySmiley.png": 0,
-      "/images/frowningSmiley.png": 0,
-      "/images/wozySmiley.png": 0,
-      "/images/sleepySmiley.png": 0,
-      "/images/relievedSmiley.png": 0,
-      "/images/heartsSmiley.png": 0,
-      "/images/zonnebrilSmiley.png": 0,
-      "/images/grinningSmiley.png": 0,
-      "/images/zanySmiley.png": 0,
+      "/images/cryingSmiley.png": 1,
+      "/images/angrySmiley.png": 2,
+      "/images/frowningSmiley.png": 3,
+      "/images/wozySmiley.png": 4,
+      "/images/sleepySmiley.png": 5,
+      "/images/relievedSmiley.png": 6,
+      "/images/heartsSmiley.png": 7,
+      "/images/zonnebrilSmiley.png": 8,
+      "/images/grinningSmiley.png": 9,
+      "/images/zanySmiley.png": 10,
     };
 
     data.forEach((item) => {
@@ -48,10 +49,17 @@ const DataChart = () => {
   };
 
   useEffect(() => {
-    if (chartData) {
-      const ctx = document.getElementById("myChart").getContext("2d");
+    if (chartData && myChart) {
+      myChart.data.datasets[0].data = chartData;
+      myChart.update();
+    }
+  }, [chartData, myChart]);
 
-      new Chart(ctx, {
+  useEffect(() => {
+    const ctx = document.getElementById("myChart");
+
+    if (ctx && !myChart) {
+      const chartInstance = new Chart(ctx, {
         type: "bar",
         data: {
           labels: [
@@ -69,7 +77,7 @@ const DataChart = () => {
           datasets: [
             {
               label: "# of Votes",
-              data: chartData,
+              data: chartData || [],
               backgroundColor: [
                 "rgba(255, 99, 132, 0.2)",
                 "rgba(54, 162, 235, 0.2)",
@@ -106,8 +114,35 @@ const DataChart = () => {
           },
         },
       });
+
+      setMyChart(chartInstance);
     }
-  }, [chartData]);
+
+    return () => {
+      if (myChart) {
+        myChart.destroy();
+      }
+    };
+  }, [chartData, myChart]);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, "stemmingen"),
+      (querySnapshot) => {
+        const data = querySnapshot.docs.map((doc) => doc.data());
+
+        console.log("Fetched data from Firebase: ", data);
+
+        // Process the data for the chart
+        const processedData = processData(data);
+        console.log("Processed chart data: ", processedData);
+
+        setChartData(processedData);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [db]);
 
   return <canvas id="myChart" width="400" height="400"></canvas>;
 };

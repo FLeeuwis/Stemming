@@ -55,11 +55,11 @@ const Stemming = () => {
       console.error("Error adding document: ", error);
       alert("Er is een fout opgetreden bij het opslaan van de stemming.");
     }
+    navigate("/home");
   };
 
   const handleClosePopup = () => {
     setIsPopupOpen(false);
-    navigate("/home");
   };
 
   return (

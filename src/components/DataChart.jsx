@@ -26,16 +26,16 @@ const DataChart = () => {
 
   const processData = (data) => {
     const imageCounts = {
-      "/images/cryingSmiley.png": 1,
-      "/images/angrySmiley.png": 2,
-      "/images/frowningSmiley.png": 3,
-      "/images/wozySmiley.png": 4,
-      "/images/sleepySmiley.png": 5,
-      "/images/relievedSmiley.png": 6,
-      "/images/heartsSmiley.png": 7,
-      "/images/zonnebrilSmiley.png": 8,
-      "/images/grinningSmiley.png": 9,
-      "/images/zanySmiley.png": 10,
+      "/images/cryingSmiley.png": 0,
+      "/images/angrySmiley.png": 0,
+      "/images/frowningSmiley.png": 0,
+      "/images/wozySmiley.png": 0,
+      "/images/sleepySmiley.png": 0,
+      "/images/relievedSmiley.png": 0,
+      "/images/heartsSmiley.png": 0,
+      "/images/zonnebrilSmiley.png": 0,
+      "/images/grinningSmiley.png": 0,
+      "/images/zanySmiley.png": 0,
     };
 
     data.forEach((item) => {

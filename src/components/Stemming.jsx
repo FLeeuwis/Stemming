@@ -59,6 +59,7 @@ const Stemming = () => {
 
   const handleClosePopup = () => {
     setIsPopupOpen(false);
+    navigate("/home");
   };
 
   return (

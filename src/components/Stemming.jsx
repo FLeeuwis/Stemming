@@ -1,24 +1,24 @@
 import React, { useState } from "react";
 import { db } from "../firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
-const imageSources = [
-  "/images/cryingSmiley.png",
-  "/images/angrySmiley.png",
-  "/images/frowningSmiley.png",
-  "/images/wozySmiley.png",
-  "/images/sleepySmiley.png",
-  "/images/relievedSmiley.png",
-  "/images/heartsSmiley.png",
-  "/images/zonnebrilSmiley.png",
-  "/images/grinningSmiley.png",
-  "/images/zanySmiley.png",
+const moods = [
+  { src: "/images/cryingSmiley.png", value: 1 },
+  { src: "/images/angrySmiley.png", value: 2 },
+  { src: "/images/frowningSmiley.png", value: 3 },
+  { src: "/images/wozySmiley.png", value: 4 },
+  { src: "/images/sleepySmiley.png", value: 5 },
+  { src: "/images/relievedSmiley.png", value: 6 },
+  { src: "/images/heartsSmiley.png", value: 7 },
+  { src: "/images/zonnebrilSmiley.png", value: 8 },
+  { src: "/images/grinningSmiley.png", value: 9 },
+  { src: "/images/zanySmiley.png", value: 10 },
 ];
 
 const Stemming = () => {
   const navigate = useNavigate();
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedMood, setSelectedMood] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const handleLogout = () => {
@@ -30,12 +30,12 @@ const Stemming = () => {
     navigate("/home");
   };
 
-  const handleImageClick = (src) => {
-    setSelectedImage(src);
+  const handleImageClick = (mood) => {
+    setSelectedMood(mood);
   };
 
-  const handleSubmit = () => {
-    if (selectedImage) {
+  const handleSubmit = async () => {
+    if (selectedMood) {
       setIsPopupOpen(true);
     } else {
       alert("Selecteer eerst een stemming.");
@@ -45,12 +45,12 @@ const Stemming = () => {
   const handleConfirm = async () => {
     try {
       const docRef = await addDoc(collection(db, "stemmingen"), {
-        image: selectedImage,
-        timestamp: new Date(),
+        mood: selectedMood.value,
+        timestamp: serverTimestamp(),
       });
       console.log("Document toegevoegd met ID: ", docRef.id);
       alert("Stemming succesvol opgeslagen!");
-      setSelectedImage(null);
+      setSelectedMood(null);
       setIsPopupOpen(false);
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -78,7 +78,7 @@ const Stemming = () => {
           </button>
         </div>
         {/* Toegevoegde tekst */}
-        <div className="w-full p-8 text-[15px] text-[#3B3939]  mx-auto text-center mt-4 font-trispace">
+        <div className="w-full p-8 text-[15px] text-[#3B3939] mx-auto text-center mt-4 font-trispace">
           <p>
             Muziek heeft een betoverend effect op onze emoties. Het heeft de
             kracht om ons op te vrolijken, te kalmeren, te troosten of zelfs
@@ -91,15 +91,15 @@ const Stemming = () => {
 
       {/* Emoji selectie sectie */}
       <div className="flex flex-wrap justify-center gap-4 mb-4">
-        {imageSources.map((src, index) => (
+        {moods.map((mood, index) => (
           <img
             key={index}
-            src={src}
+            src={mood.src}
             alt={`emoji-${index}`}
             className={`w-16 h-16 cursor-pointer ${
-              selectedImage === src ? "border-4 rounded border-[#FFBE17]" : ""
+              selectedMood === mood ? "border-4 rounded border-[#FFBE17]" : ""
             }`}
-            onClick={() => handleImageClick(src)}
+            onClick={() => handleImageClick(mood)}
           />
         ))}
       </div>

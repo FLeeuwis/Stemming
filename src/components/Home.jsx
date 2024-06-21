@@ -1,78 +1,9 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Line } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler,
-} from "chart.js";
-import { db } from "../firebase"; // Zorg ervoor dat je Firebase hebt geconfigureerd
-import { collection, getDocs } from "firebase/firestore";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-);
-
-// Hook om afbeeldingen vooraf te laden
-const usePreloadImages = (srcArray) => {
-  const [images, setImages] = useState([]);
-
-  useEffect(() => {
-    const loadedImages = srcArray.map((src) => {
-      const img = new Image();
-      img.src = src;
-      return img;
-    });
-
-    setImages(loadedImages);
-  }, [srcArray]);
-
-  return images;
-};
-
-const imageSources = [
-  "/images/cryingSmiley.png",
-  "/images/angrySmiley.png",
-  "/images/frowningSmiley.png",
-  "/images/wozySmiley.png",
-  "/images/sleepySmiley.png",
-  "/images/relievedSmiley.png",
-  "/images/heartsSmiley.png",
-  "/images/zonnebrilSmiley.png",
-  "/images/grinningSmiley.png",
-  "/images/zanySmiley.png",
-];
+import DataChart from "./DataChart";
 
 const Home = () => {
   const navigate = useNavigate();
-  const chartRef = useRef(null);
-  const images = usePreloadImages(imageSources);
-  const [chartData, setChartData] = useState({
-    labels: getLastNDays(7),
-    datasets: [
-      {
-        label: "Stemmingen",
-        data: Array(7).fill(0), // Begin met een lege dataset
-        fill: false,
-        borderColor: "#FFBE17",
-        backgroundColor: "#FFBE17",
-        tension: 0.1,
-      },
-    ],
-  });
 
   const handleLogout = () => {
     window.localStorage.removeItem("token");
@@ -81,120 +12,6 @@ const Home = () => {
 
   const handleBoatClick = () => {
     navigate("/stemming");
-  };
-
-  function getLastNDays(count) {
-    const daysOfWeek = [
-      "zondag",
-      "maandag",
-      "dinsdag",
-      "woensdag",
-      "donderdag",
-      "vrijdag",
-      "zaterdag",
-    ];
-
-    const days = [];
-    for (let i = 0; i < count; i++) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      const dayName = daysOfWeek[date.getDay()];
-      days.push(dayName);
-    }
-    return days.reverse();
-  }
-
-  useEffect(() => {
-    const fetchStemmingen = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "stemmingen"));
-        const data = [];
-        querySnapshot.forEach((doc) => {
-          data.push(doc.data());
-        });
-        console.log("Fetched data from Firebase: ", data); // Debugging statement
-        processChartData(data);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      }
-    };
-
-    const processChartData = (data) => {
-      // Verwerk de gegevens van Firebase naar een bruikbaar formaat voor de chart
-      const labels = getLastNDays(7);
-      const moodCounts = Array(labels.length).fill(0);
-
-      data.forEach((entry) => {
-        const date = new Date(entry.timestamp.seconds * 1000);
-        const dayName = getDayName(date);
-        const dayIndex = labels.indexOf(dayName);
-        if (dayIndex !== -1) {
-          moodCounts[dayIndex] += entry.mood; // Aannemende dat `entry.mood` de stemming waarde bevat
-        }
-      });
-
-      console.log("Processed chart data: ", moodCounts); // Debugging statement
-
-      setChartData((prevState) => ({
-        ...prevState,
-        datasets: [
-          {
-            ...prevState.datasets[0],
-            data: moodCounts,
-          },
-        ],
-      }));
-    };
-
-    fetchStemmingen();
-  }, []);
-
-  const getDayName = (date) => {
-    const daysOfWeek = [
-      "zondag",
-      "maandag",
-      "dinsdag",
-      "woensdag",
-      "donderdag",
-      "vrijdag",
-      "zaterdag",
-    ];
-    return daysOfWeek[date.getDay()];
-  };
-
-  const drawImagePlugin = {
-    id: "drawImagePlugin",
-    afterDraw: (chart) => {
-      const ctx = chart.ctx;
-      const yAxis = chart.scales.y;
-
-      images.forEach((img, index) => {
-        if (!img.complete) {
-          console.error(`Afbeelding ${index} is niet geladen.`);
-          return; // Skip drawing if image is not loaded
-        }
-        const y = yAxis.getPixelForValue(index);
-        const x = yAxis.left - 40; // Adjust the x position as needed
-        console.log(`Tekenen afbeelding ${index} op (${x}, ${y})`);
-        ctx.drawImage(img, x, y - 15, 30, 30);
-      });
-    },
-  };
-
-  const options = {
-    plugins: {
-      drawImagePlugin: {},
-    },
-    scales: {
-      y: {
-        ticks: {
-          callback: function () {
-            // Return empty string to avoid default number rendering
-            return "";
-          },
-        },
-      },
-    },
   };
 
   return (
@@ -216,12 +33,7 @@ const Home = () => {
       <div className="flex flex-1 p-4">
         <div className="w-full md:w-1/2">
           <div className="relative h-64 md:h-96">
-            <Line
-              ref={chartRef}
-              data={chartData}
-              options={options}
-              plugins={[drawImagePlugin]}
-            />
+            <DataChart />
           </div>
         </div>
       </div>

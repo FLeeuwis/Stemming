@@ -49,7 +49,6 @@ const Stemming = () => {
         timestamp: serverTimestamp(),
       });
       console.log("Document toegevoegd met ID: ", docRef.id);
-      alert("Stemming succesvol opgeslagen!");
       setSelectedMood(null);
       setIsPopupOpen(false);
     } catch (error) {

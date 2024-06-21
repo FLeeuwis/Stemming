@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase";
-import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import Chart from "chart.js/auto";
 
 const DataChart = () => {
   const [chartData, setChartData] = useState(null);
-  const [myChart, setMyChart] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,17 +48,10 @@ const DataChart = () => {
   };
 
   useEffect(() => {
-    if (chartData && myChart) {
-      myChart.data.datasets[0].data = chartData;
-      myChart.update();
-    }
-  }, [chartData, myChart]);
+    if (chartData) {
+      const ctx = document.getElementById("myChart").getContext("2d");
 
-  useEffect(() => {
-    const ctx = document.getElementById("myChart");
-
-    if (ctx && !myChart) {
-      const chartInstance = new Chart(ctx, {
+      new Chart(ctx, {
         type: "bar",
         data: {
           labels: [
@@ -77,7 +69,7 @@ const DataChart = () => {
           datasets: [
             {
               label: "# of Votes",
-              data: chartData || [],
+              data: chartData,
               backgroundColor: [
                 "rgba(255, 99, 132, 0.2)",
                 "rgba(54, 162, 235, 0.2)",
@@ -114,35 +106,8 @@ const DataChart = () => {
           },
         },
       });
-
-      setMyChart(chartInstance);
     }
-
-    return () => {
-      if (myChart) {
-        myChart.destroy();
-      }
-    };
-  }, [chartData, myChart]);
-
-  useEffect(() => {
-    const unsubscribe = onSnapshot(
-      collection(db, "stemmingen"),
-      (querySnapshot) => {
-        const data = querySnapshot.docs.map((doc) => doc.data());
-
-        console.log("Fetched data from Firebase: ", data);
-
-        // Process the data for the chart
-        const processedData = processData(data);
-        console.log("Processed chart data: ", processedData);
-
-        setChartData(processedData);
-      }
-    );
-
-    return () => unsubscribe();
-  }, [db]);
+  }, [chartData]);
 
   return <canvas id="myChart" width="400" height="400"></canvas>;
 };

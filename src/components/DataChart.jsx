@@ -55,7 +55,7 @@ const DataChart = () => {
         data: {
           labels: [
             "Crying",
-            "Angry",
+            "/public/images/angrySmiley.png",
             "Frowning",
             "Wozy",
             "Sleepy",

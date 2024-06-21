@@ -13,7 +13,7 @@ const DataChart = () => {
 
       console.log("Fetched data from Firebase: ", data);
 
-      // Verwerk de gegevens voor de grafiek
+      // Process the data for the chart
       const processedData = processData(data);
       console.log("Processed chart data: ", processedData);
 
@@ -21,7 +21,7 @@ const DataChart = () => {
     };
 
     fetchData();
-  }, []); // Zorg ervoor dat deze useEffect alleen bij de eerste render wordt uitgevoerd
+  }, []);
 
   const processData = (data) => {
     const imageCounts = {
@@ -38,13 +38,9 @@ const DataChart = () => {
     };
 
     data.forEach((item) => {
-      // Controleer of item.mood een geldige afbeeldingsbron is
-      const imageSrc = Object.keys(imageCounts).find(
-        (src) => src === `/images/${item.mood}.png`
-      );
-
-      if (imageSrc) {
-        imageCounts[imageSrc]++;
+      const moodImage = `/images/${item.mood}.png`; // Assuming mood is a number corresponding to an index
+      if (moodImage in imageCounts) {
+        imageCounts[moodImage]++;
       }
     });
 
@@ -53,7 +49,6 @@ const DataChart = () => {
 
   useEffect(() => {
     if (chartData) {
-      // Configureer de grafiek hier
       const ctx = document.getElementById("myChart").getContext("2d");
 
       new Chart(ctx, {

@@ -25,22 +25,21 @@ const DataChart = () => {
 
   const processData = (data) => {
     const imageCounts = {
-      "/images/cryingSmiley.png": 0,
-      "/images/angrySmiley.png": 0,
-      "/images/frowningSmiley.png": 0,
-      "/images/wozySmiley.png": 0,
-      "/images/sleepySmiley.png": 0,
-      "/images/relievedSmiley.png": 0,
-      "/images/heartsSmiley.png": 0,
-      "/images/zonnebrilSmiley.png": 0,
-      "/images/grinningSmiley.png": 0,
-      "/images/zanySmiley.png": 0,
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0,
+      5: 0,
+      6: 0,
+      7: 0,
+      8: 0,
+      9: 0,
+      10: 0,
     };
 
     data.forEach((item) => {
-      const moodImage = `/images/${item.mood}.png`; // Assuming mood is a number corresponding to an index
-      if (moodImage in imageCounts) {
-        imageCounts[moodImage]++;
+      if (item.mood in imageCounts) {
+        imageCounts[item.mood]++;
       }
     });
 

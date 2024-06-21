@@ -55,7 +55,7 @@ const DataChart = () => {
         data: {
           labels: [
             "Crying",
-            "/public/images/angrySmiley.png",
+            "Angry",
             "Frowning",
             "Wozy",
             "Sleepy",
@@ -67,7 +67,7 @@ const DataChart = () => {
           ],
           datasets: [
             {
-              label: "# of Votes",
+              label: "stemmingen",
               data: chartData,
               backgroundColor: [
                 "rgba(255, 99, 132, 0.2)",

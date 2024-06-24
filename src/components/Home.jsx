@@ -9,10 +9,10 @@ import token from "./InlogPagina";
 const spotifyApi = new SpotifyWebApi();
 
 const moodToPlaylist = {
-  1: "4NX7OGpc4HVFYmB2hNcGpV", // angry playlist
-  2: "1XE7rQIGl1NFtWEAfwn4b9", // frown playlist
-  3: "3TejicIfBAtllqAO6iOUgu", // woozy playlist
-  4: "37i9dQZF1DWSsPOGuds90p", //  cry playlist
+  1: "37i9dQZF1DWSsPOGuds90p", // cry playlist
+  2: "4NX7OGpc4HVFYmB2hNcGpV", // angry playlist
+  3: "1XE7rQIGl1NFtWEAfwn4b9", // frown playlist
+  4: "3TejicIfBAtllqAO6iOUgu", //  wooz playlist
   5: "4R79MKLEDov4pzeNQP6RdP", // Calm playlist
   6: "37i9dQZF1DWYBO1MoTDhZI", // sunnies playlist
   7: "37i9dQZF1DX6QClArDhvcW", // sleepy playlist

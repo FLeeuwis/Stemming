@@ -3,23 +3,28 @@ import { useNavigate } from "react-router-dom";
 import DataChart from "./DataChart";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
+import SpotifyWebApi from "spotify-web-api-js";
+import token from "./InlogPagina";
 
-const moodToSpotify = {
-  1: "spotify:track:4uLU6hMCjMI75M1A2tKUQC",
-  2: "spotify:track:7GhIk7Il098yCjg4BQjzvb",
-  3: "spotify:track:1wVuPmvt6AWvTL5W2GJnzZ",
-  4: "spotify:track:2TpxZ7JUBn3uw46aR7qd6V",
-  5: "spotify:track:0eGsygTp906u18L0Oimnem",
-  6: "spotify:track:1dNIEtp7AY3oDAKCGg2XkH",
-  7: "spotify:track:3n3Ppam7vgaVa1iaRUc9Lp",
-  8: "spotify:track:7qiZfU4dY1lWllzX7mPBI3",
-  9: "spotify:track:6I9VzXrHxO9rA9A5euc8Ak",
-  10: "spotify:track:2takcwOaAZWiXQijPHIx7B",
+const spotifyApi = new SpotifyWebApi();
+
+const moodToPlaylist = {
+  1: "sadPlaylistID", // Sad playlist
+  2: "angryPlaylistID", // Angry playlist
+  3: "melancholicPlaylistID", // Melancholic playlist
+  4: "chillPlaylistID", // Chill playlist
+  5: "calmPlaylistID", // Calm playlist
+  6: "upliftingPlaylistID", // Uplifting playlist
+  7: "lovePlaylistID", // Love playlist
+  8: "coolPlaylistID", // Cool playlist
+  9: "happyPlaylistID", // Happy playlist
+  10: "funPlaylistID", // Fun playlist
 };
 
 const Home = () => {
   const navigate = useNavigate();
   const [latestMood, setLatestMood] = useState(null);
+  const [spotifyTrack, setSpotifyTrack] = useState("");
 
   useEffect(() => {
     const fetchLatestMood = async () => {
@@ -29,8 +34,24 @@ const Home = () => {
       if (data.length > 0) {
         const latestMood = data.sort((a, b) => b.timestamp - a.timestamp)[0];
         setLatestMood(latestMood.mood);
+
+        const playlistID = moodToPlaylist[latestMood.mood];
+        fetchRandomTrackFromPlaylist(playlistID);
       }
     };
+    const fetchRandomTrackFromPlaylist = async (playlistID) => {
+      try {
+        const response = await spotifyApi.getPlaylistTracks(playlistID);
+        const tracks = response.items;
+        const randomTrack =
+          tracks[Math.floor(Math.random() * tracks.length)].track.id;
+        setSpotifyTrack(randomTrack);
+      } catch (error) {
+        console.error("Error fetching tracks from Spotify:", error);
+      }
+    };
+    spotifyApi.setAccessToken(token);
+
     fetchLatestMood();
   }, []);
 
@@ -66,18 +87,15 @@ const Home = () => {
           </div>
         </div>
       </div>
-
       {/* Spotify player sectie */}
       <div className="flex justify-center items-center mb-4">
-        {latestMood && (
+        {spotifyTrack && (
           <iframe
-            src={`https://open.spotify.com/embed/track/${
-              moodToSpotify[latestMood].split(":")[2]
-            }`}
+            src={`https://open.spotify.com/embed/track/${spotifyTrack}`}
             width="300"
             height="80"
             frameBorder="0"
-            allowtransparency="true"
+            allowTransparency="true"
             allow="encrypted-media"
           ></iframe>
         )}

@@ -83,26 +83,25 @@ const Home = () => {
           </button>
         </div>
       </div>
-      {/* chart sectie */}
+      {/* chart en Spotify player sectie */}
       <div className="flex flex-1 p-4">
         <div className="w-full md:w-1/2">
           <div className="relative h-64 md:h-96">
             <DataChart />
           </div>
         </div>
-      </div>
-      {/* Spotify player sectie */}
-      <div className="flex justify-center items-center mb-4">
-        {spotifyTrack && (
-          <iframe
-            src={`https://open.spotify.com/embed/track/${spotifyTrack}`}
-            width="300"
-            height="80"
-            frameBorder="0"
-            allowTransparency="true"
-            allow="encrypted-media"
-          ></iframe>
-        )}
+        <div className="w-full md:w-1/2 flex justify-center items-center">
+          {spotifyTrack && (
+            <iframe
+              src={`https://open.spotify.com/embed/track/${spotifyTrack}`}
+              width="400"
+              height="500"
+              frameBorder="0"
+              allowTransparency="true"
+              allow="encrypted-media"
+            ></iframe>
+          )}
+        </div>
       </div>
 
       {/* Waves sectie */}

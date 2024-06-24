@@ -165,6 +165,16 @@ const DataChart = () => {
             },
             y: {
               stacked: true,
+              beginAtZero: true,
+              ticks: {
+                callback: function (value) {
+                  // Custom labels for the y-axis
+                  if (value === 0) return "Low";
+                  if (value === 1) return "Medium";
+                  if (value === 2) return "High";
+                  return value; // Default to the actual value if it doesn't match
+                },
+              },
             },
           },
         },

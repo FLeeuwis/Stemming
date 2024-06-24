@@ -1,18 +1,18 @@
-import React, { useRef, useState, useEffect } from "react";
+// Home.jsx
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DataChart from "./DataChart";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import SpotifyWebApi from "spotify-web-api-js";
-import token from "./InlogPagina";
 
 const spotifyApi = new SpotifyWebApi();
 
 const moodToPlaylist = {
-  1: "37i9dQZF1DWSsPOGuds90p", // cry playlist
-  2: "4NX7OGpc4HVFYmB2hNcGpV", // angry playlist
-  3: "1XE7rQIGl1NFtWEAfwn4b9", // frown playlist
-  4: "3TejicIfBAtllqAO6iOUgu", //  wooz playlist
+  1: "4NX7OGpc4HVFYmB2hNcGpV", // angry playlist
+  2: "1XE7rQIGl1NFtWEAfwn4b9", // frown playlist
+  3: "3TejicIfBAtllqAO6iOUgu", // woozy playlist
+  4: "37i9dQZF1DWSsPOGuds90p", // cry playlist
   5: "4R79MKLEDov4pzeNQP6RdP", // Calm playlist
   6: "37i9dQZF1DWYBO1MoTDhZI", // sunnies playlist
   7: "37i9dQZF1DX6QClArDhvcW", // sleepy playlist
@@ -25,6 +25,7 @@ const Home = () => {
   const navigate = useNavigate();
   const [latestMood, setLatestMood] = useState(null);
   const [spotifyTrack, setSpotifyTrack] = useState("");
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     const fetchLatestMood = async () => {
@@ -34,6 +35,7 @@ const Home = () => {
       if (data.length > 0) {
         const latestMood = data.sort((a, b) => b.timestamp - a.timestamp)[0];
         setLatestMood(latestMood.mood);
+        setData(data);
 
         const playlistID = moodToPlaylist[latestMood.mood];
         fetchRandomTrackFromPlaylist(playlistID);
@@ -86,16 +88,17 @@ const Home = () => {
       {/* chart en Spotify player sectie */}
       <div className="flex flex-1 p-4 space-x-4">
         <div className="w-full md:w-1/2 flex justify-center items-center">
-          <div className="relative h-96 w-full p-4 bg-white">
-            <DataChart />
+          <div className="relative h-96 w-full p-4 bg-gray-100">
+            <DataChart data={data} />
           </div>
         </div>
         <div className="w-full md:w-1/2 flex justify-center items-center">
           {spotifyTrack && (
             <iframe
               src={`https://open.spotify.com/embed/track/${spotifyTrack}`}
-              width="50%"
+              width="100%"
               height="400"
+              frameBorder="0"
               allow="encrypted-media"
               className="rounded-lg"
             ></iframe>

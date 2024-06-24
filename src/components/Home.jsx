@@ -9,16 +9,16 @@ import token from "./InlogPagina";
 const spotifyApi = new SpotifyWebApi();
 
 const moodToPlaylist = {
-  1: "sadPlaylistID", // Sad playlist
-  2: "angryPlaylistID", // Angry playlist
-  3: "melancholicPlaylistID", // Melancholic playlist
-  4: "chillPlaylistID", // Chill playlist
-  5: "calmPlaylistID", // Calm playlist
-  6: "upliftingPlaylistID", // Uplifting playlist
-  7: "lovePlaylistID", // Love playlist
-  8: "coolPlaylistID", // Cool playlist
-  9: "happyPlaylistID", // Happy playlist
-  10: "funPlaylistID", // Fun playlist
+  1: "4NX7OGpc4HVFYmB2hNcGpV", // angry playlist
+  2: "1XE7rQIGl1NFtWEAfwn4b9", // frown playlist
+  3: "3TejicIfBAtllqAO6iOUgu", // woozy playlist
+  4: "37i9dQZF1DWSsPOGuds90p", //  cry playlist
+  5: "4R79MKLEDov4pzeNQP6RdP", // Calm playlist
+  6: "37i9dQZF1DWYBO1MoTDhZI", // sunnies playlist
+  7: "37i9dQZF1DX6QClArDhvcW", // sleepy playlist
+  8: "16OtXQVtM7e34lTZfrSbYd", // grinning playlist
+  9: "37i9dQZF1DWVf1Phr4ZVgO", // heart playlist
+  10: "5sSykt3JYdAuEycuQQfVWF", // goofy playlist
 };
 
 const Home = () => {

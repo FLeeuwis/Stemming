@@ -1,9 +1,38 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DataChart from "./DataChart";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
+
+const moodToSpotify = {
+  1: "spotify:track:4uLU6hMCjMI75M1A2tKUQC",
+  2: "spotify:track:7GhIk7Il098yCjg4BQjzvb",
+  3: "spotify:track:1wVuPmvt6AWvTL5W2GJnzZ",
+  4: "spotify:track:2TpxZ7JUBn3uw46aR7qd6V",
+  5: "spotify:track:0eGsygTp906u18L0Oimnem",
+  6: "spotify:track:1dNIEtp7AY3oDAKCGg2XkH",
+  7: "spotify:track:3n3Ppam7vgaVa1iaRUc9Lp",
+  8: "spotify:track:7qiZfU4dY1lWllzX7mPBI3",
+  9: "spotify:track:6I9VzXrHxO9rA9A5euc8Ak",
+  10: "spotify:track:2takcwOaAZWiXQijPHIx7B",
+};
 
 const Home = () => {
   const navigate = useNavigate();
+  const [latestMood, setLatestMood] = useState(null);
+
+  useEffect(() => {
+    const fetchLatestMood = async () => {
+      const querySnapshot = await getDocs(collection(db, "stemmingen"));
+      const data = querySnapshot.docs.map((doc) => doc.data());
+
+      if (data.length > 0) {
+        const latestMood = data.sort((a, b) => b.timestamp - a.timestamp)[0];
+        setLatestMood(latestMood.mood);
+      }
+    };
+    fetchLatestMood();
+  }, []);
 
   const handleLogout = () => {
     window.localStorage.removeItem("token");
@@ -36,6 +65,22 @@ const Home = () => {
             <DataChart />
           </div>
         </div>
+      </div>
+
+      {/* Spotify player sectie */}
+      <div className="flex justify-center items-center mb-4">
+        {latestMood && (
+          <iframe
+            src={`https://open.spotify.com/embed/track/${
+              moodToSpotify[latestMood].split(":")[2]
+            }`}
+            width="300"
+            height="80"
+            frameBorder="0"
+            allowtransparency="true"
+            allow="encrypted-media"
+          ></iframe>
+        )}
       </div>
 
       {/* Waves sectie */}

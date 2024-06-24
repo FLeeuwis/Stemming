@@ -54,9 +54,9 @@ const DataChart = () => {
         typeof item.mood !== "undefined" &&
         item.mood !== null
       ) {
-        const date = new Date(item.timestamp);
+        const date = new Date(item.timestamp.seconds * 1000); // Assuming Firestore timestamp
         const day = date.getDay(); // Get day of the week (0-6)
-        if (item.mood in moodCounts[day]) {
+        if (moodCounts[day] && item.mood in moodCounts[day]) {
           moodCounts[day][item.mood]++;
         } else {
           console.warn(`Unexpected mood value at index ${index}:`, item.mood);

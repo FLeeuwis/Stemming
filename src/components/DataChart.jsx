@@ -25,13 +25,13 @@ const DataChart = () => {
 
   const processData = (data) => {
     const daysOfWeek = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
+      "Zondag",
+      "Maandag",
+      "Dinsdag",
+      "Woensdag",
+      "Donderdag",
+      "Vrijdag",
+      "Zaterdag",
     ];
     const moodCounts = daysOfWeek.map(() => ({
       1: 0,
@@ -77,13 +77,13 @@ const DataChart = () => {
         type: "bar",
         data: {
           labels: [
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
+            "Zondag",
+            "Maandag",
+            "Dinsdag",
+            "Woensdag",
+            "Donderdag",
+            "Vrijdag",
+            "Zaterdag",
           ],
           datasets: [
             {
@@ -100,7 +100,6 @@ const DataChart = () => {
               borderColor: "rgba(54, 162, 235, 1)",
               borderWidth: 1,
             },
-            // Add other mood datasets here
             {
               label: "Frowning",
               data: chartData.map((day) => day[2]),
@@ -166,7 +165,6 @@ const DataChart = () => {
             },
             y: {
               stacked: true,
-              beginAtZero: true,
             },
           },
         },

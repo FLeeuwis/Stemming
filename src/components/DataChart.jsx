@@ -51,7 +51,7 @@ const DataChart = () => {
       const ctx = document.getElementById("myChart").getContext("2d");
 
       new Chart(ctx, {
-        type: "bar",
+        type: "Line",
         data: {
           labels: [
             "Crying",
@@ -60,14 +60,13 @@ const DataChart = () => {
             "Wozy",
             "Sleepy",
             "Relieved",
-            "Hearts",
-            "Zonnebril",
+            "Loved",
+            "Cool",
             "Grinning",
             "Zany",
           ],
           datasets: [
             {
-              label: "stemmingen",
               data: chartData,
               backgroundColor: [
                 "rgba(255, 99, 132, 0.2)",

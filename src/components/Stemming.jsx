@@ -52,7 +52,7 @@ const Stemming = () => {
       setSelectedMood(null);
       setIsPopupOpen(false);
     } catch (error) {
-      console.error("Error adding document: ", error);
+      console.error("Error adding documents: ", error);
       alert("Er is een fout opgetreden bij het opslaan van de stemming.");
     }
     navigate("/home");

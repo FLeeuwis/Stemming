@@ -47,7 +47,12 @@ const DataChart = () => {
     }));
 
     data.forEach((item) => {
-      if (item && item.timestamp && item.mood !== undefined) {
+      if (
+        item &&
+        item.timestamp &&
+        item.mood !== undefined &&
+        item.mood !== null
+      ) {
         const date = new Date(item.timestamp);
         const day = date.getDay(); // Get day of the week (0-6)
         if (item.mood in moodCounts[day]) {

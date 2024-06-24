@@ -4,7 +4,6 @@ import DataChart from "./DataChart";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import SpotifyWebApi from "spotify-web-api-js";
-import token from "./InlogPagina";
 
 const spotifyApi = new SpotifyWebApi();
 

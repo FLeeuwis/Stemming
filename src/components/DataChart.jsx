@@ -24,7 +24,16 @@ const DataChart = () => {
   }, []);
 
   const processData = (data) => {
-    const imageCounts = {
+    const daysOfWeek = [
+      "Zondag",
+      "Maandag",
+      "Dinsdag",
+      "Woensdag",
+      "Donderdag",
+      "Vrijdag",
+      "Zaterdag",
+    ];
+    const moodCounts = daysOfWeek.map(() => ({
       1: 0,
       2: 0,
       3: 0,
@@ -35,15 +44,17 @@ const DataChart = () => {
       8: 0,
       9: 0,
       10: 0,
-    };
+    }));
 
     data.forEach((item) => {
-      if (item.mood in imageCounts) {
-        imageCounts[item.mood]++;
+      const date = new Date(item.timestamp);
+      const day = date.getDay(); // Get day of the week (0-6)
+      if (item.mood in moodCounts[day]) {
+        moodCounts[day][item.mood]++;
       }
     });
 
-    return Object.values(imageCounts);
+    return moodCounts.map((moodCount) => Object.values(moodCount));
   };
 
   useEffect(() => {
@@ -54,52 +65,95 @@ const DataChart = () => {
         type: "bar",
         data: {
           labels: [
-            "Crying",
-            "Angry",
-            "Frowning",
-            "Wozy",
-            "Sleepy",
-            "Relieved",
-            "Loved",
-            "Cool",
-            "Grinning",
-            "Zany",
+            "Zondag",
+            "Maandag",
+            "Dinsdag",
+            "Woensdag",
+            "Donderdag",
+            "Vrijdag",
+            "Zaterdag",
           ],
           datasets: [
             {
-              label: "Hoe voel ik mij?",
-              data: chartData,
-              backgroundColor: [
-                "rgba(255, 99, 132, 0.2)",
-                "rgba(54, 162, 235, 0.2)",
-                "rgba(255, 206, 86, 0.2)",
-                "rgba(75, 192, 192, 0.2)",
-                "rgba(153, 102, 255, 0.2)",
-                "rgba(255, 159, 64, 0.2)",
-                "rgba(255, 99, 132, 0.2)",
-                "rgba(54, 162, 235, 0.2)",
-                "rgba(255, 206, 86, 0.2)",
-                "rgba(75, 192, 192, 0.2)",
-              ],
-              borderColor: [
-                "rgba(255, 99, 132, 1)",
-                "rgba(54, 162, 235, 1)",
-                "rgba(255, 206, 86, 1)",
-                "rgba(75, 192, 192, 1)",
-                "rgba(153, 102, 255, 1)",
-                "rgba(255, 159, 64, 1)",
-                "rgba(255, 99, 132, 1)",
-                "rgba(54, 162, 235, 1)",
-                "rgba(255, 206, 86, 1)",
-                "rgba(75, 192, 192, 1)",
-              ],
+              label: "Crying",
+              data: chartData.map((day) => day[0]),
+              backgroundColor: "rgba(255, 99, 132, 0.2)",
+              borderColor: "rgba(255, 99, 132, 1)",
+              borderWidth: 1,
+            },
+            {
+              label: "Angry",
+              data: chartData.map((day) => day[1]),
+              backgroundColor: "rgba(54, 162, 235, 0.2)",
+              borderColor: "rgba(54, 162, 235, 1)",
+              borderWidth: 1,
+            },
+            // Add other mood datasets here
+            {
+              label: "Frowning",
+              data: chartData.map((day) => day[2]),
+              backgroundColor: "rgba(255, 206, 86, 0.2)",
+              borderColor: "rgba(255, 206, 86, 1)",
+              borderWidth: 1,
+            },
+            {
+              label: "Wozy",
+              data: chartData.map((day) => day[3]),
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 1,
+            },
+            {
+              label: "Sleepy",
+              data: chartData.map((day) => day[4]),
+              backgroundColor: "rgba(153, 102, 255, 0.2)",
+              borderColor: "rgba(153, 102, 255, 1)",
+              borderWidth: 1,
+            },
+            {
+              label: "Relieved",
+              data: chartData.map((day) => day[5]),
+              backgroundColor: "rgba(255, 159, 64, 0.2)",
+              borderColor: "rgba(255, 159, 64, 1)",
+              borderWidth: 1,
+            },
+            {
+              label: "Loved",
+              data: chartData.map((day) => day[6]),
+              backgroundColor: "rgba(255, 99, 132, 0.2)",
+              borderColor: "rgba(255, 99, 132, 1)",
+              borderWidth: 1,
+            },
+            {
+              label: "Cool",
+              data: chartData.map((day) => day[7]),
+              backgroundColor: "rgba(54, 162, 235, 0.2)",
+              borderColor: "rgba(54, 162, 235, 1)",
+              borderWidth: 1,
+            },
+            {
+              label: "Grinning",
+              data: chartData.map((day) => day[8]),
+              backgroundColor: "rgba(255, 206, 86, 0.2)",
+              borderColor: "rgba(255, 206, 86, 1)",
+              borderWidth: 1,
+            },
+            {
+              label: "Zany",
+              data: chartData.map((day) => day[9]),
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              borderColor: "rgba(75, 192, 192, 1)",
               borderWidth: 1,
             },
           ],
         },
         options: {
           scales: {
+            x: {
+              stacked: true,
+            },
             y: {
+              stacked: true,
               beginAtZero: true,
             },
           },

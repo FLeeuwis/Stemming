@@ -67,6 +67,7 @@ const DataChart = () => {
           ],
           datasets: [
             {
+              label: "Hoe voel ik mij?",
               data: chartData,
               backgroundColor: [
                 "rgba(255, 99, 132, 0.2)",

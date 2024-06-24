@@ -86,7 +86,7 @@ const Home = () => {
       {/* chart en Spotify player sectie */}
       <div className="flex flex-1 p-4 space-x-4">
         <div className="w-full md:w-1/2 flex justify-center items-center">
-          <div className="relative h-96 w-full p-4 bg-white">
+          <div className="relative h-96 w-full p-8 bg-white">
             <DataChart />
           </div>
         </div>
@@ -94,7 +94,7 @@ const Home = () => {
           {spotifyTrack && (
             <iframe
               src={`https://open.spotify.com/embed/track/${spotifyTrack}`}
-              width="100%"
+              width="50%"
               height="400"
               frameBorder="0"
               allow="encrypted-media"

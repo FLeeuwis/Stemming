@@ -50,10 +50,14 @@ const Home = () => {
         console.error("Error fetching tracks from Spotify:", error);
       }
     };
-    spotifyApi.setAccessToken(token);
-
-    fetchLatestMood();
-  }, []);
+    const accessToken = window.localStorage.getItem("token");
+    if (accessToken) {
+      spotifyApi.setAccessToken(accessToken);
+      fetchLatestMood();
+    } else {
+      navigate("/");
+    }
+  }, [navigate]);
 
   const handleLogout = () => {
     window.localStorage.removeItem("token");

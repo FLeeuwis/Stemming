@@ -86,7 +86,7 @@ const Home = () => {
       {/* chart en Spotify player sectie */}
       <div className="flex flex-1 p-4">
         <div className="w-full md:w-1/2 flex justify-center items-center">
-          <div className="relative h-64 md:h-96">
+          <div className="relative h-96 md:h-full flex-grow">
             <DataChart />
           </div>
         </div>
@@ -97,8 +97,8 @@ const Home = () => {
               width="300"
               height="400"
               frameBorder="0"
-              allowTransparency="true"
               allow="encrypted-media"
+              className="rounded-lg"
             ></iframe>
           )}
         </div>

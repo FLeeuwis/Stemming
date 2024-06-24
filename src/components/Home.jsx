@@ -49,6 +49,7 @@ const Home = () => {
         console.error("Error fetching tracks from Spotify:", error);
       }
     };
+    spotifyApi.setAccessToken("token");
 
     fetchLatestMood();
   }, []);

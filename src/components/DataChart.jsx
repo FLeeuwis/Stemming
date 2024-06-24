@@ -46,18 +46,23 @@ const DataChart = () => {
       10: 0,
     }));
 
-    data.forEach((item) => {
+    data.forEach((item, index) => {
+      console.log(`Processing item at index ${index}:`, item);
       if (
         item &&
         item.timestamp &&
-        item.mood !== undefined &&
+        typeof item.mood !== "undefined" &&
         item.mood !== null
       ) {
         const date = new Date(item.timestamp);
         const day = date.getDay(); // Get day of the week (0-6)
         if (item.mood in moodCounts[day]) {
           moodCounts[day][item.mood]++;
+        } else {
+          console.warn(`Unexpected mood value at index ${index}:`, item.mood);
         }
+      } else {
+        console.warn(`Invalid item at index ${index}:`, item);
       }
     });
 

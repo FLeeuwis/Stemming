@@ -25,13 +25,13 @@ const DataChart = () => {
 
   const processData = (data) => {
     const daysOfWeek = [
-      "Zondag",
-      "Maandag",
-      "Dinsdag",
-      "Woensdag",
-      "Donderdag",
-      "Vrijdag",
-      "Zaterdag",
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
     ];
     const moodCounts = daysOfWeek.map(() => ({
       1: 0,
@@ -47,10 +47,12 @@ const DataChart = () => {
     }));
 
     data.forEach((item) => {
-      const date = new Date(item.timestamp);
-      const day = date.getDay(); // Get day of the week (0-6)
-      if (item.mood in moodCounts[day]) {
-        moodCounts[day][item.mood]++;
+      if (item && item.timestamp && item.mood !== undefined) {
+        const date = new Date(item.timestamp);
+        const day = date.getDay(); // Get day of the week (0-6)
+        if (item.mood in moodCounts[day]) {
+          moodCounts[day][item.mood]++;
+        }
       }
     });
 
@@ -65,13 +67,13 @@ const DataChart = () => {
         type: "bar",
         data: {
           labels: [
-            "Zondag",
-            "Maandag",
-            "Dinsdag",
-            "Woensdag",
-            "Donderdag",
-            "Vrijdag",
-            "Zaterdag",
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
           ],
           datasets: [
             {

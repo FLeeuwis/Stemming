@@ -10,7 +10,10 @@ import {
   Title,
   Tooltip,
   Legend,
+  TimeScale,
 } from "chart.js";
+
+import "chartjs-adapter-date-fns"; // Adapter voor tijdschalen
 
 ChartJS.register(
   CategoryScale,
@@ -19,7 +22,8 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  TimeScale // Registreer de TimeScale
 );
 
 const DataChart = ({ data }) => {
@@ -44,7 +48,7 @@ const DataChart = ({ data }) => {
       },
       title: {
         display: true,
-        text: "Stemingsdata",
+        text: "Stemmingsdata",
       },
     },
     scales: {

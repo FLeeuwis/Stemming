@@ -159,7 +159,14 @@ const InlogPagina = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem("token");
-    navigate("/");
+    auth
+      .signOut()
+      .then(() => {
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error("Error signing out: ", error);
+      });
   };
 
   return (

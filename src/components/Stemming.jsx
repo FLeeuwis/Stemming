@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { db } from "../firebase";
+import { db, auth } from "../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
 
 const moods = [
   { src: "/images/cryingSmiley.png", value: 1 },
@@ -20,11 +21,22 @@ const Stemming = () => {
   const navigate = useNavigate();
   const [selectedMood, setSelectedMood] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const user = JSON.parse(window.localStorage.getItem("user"));
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        navigate("/");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
 
   const handleLogout = () => {
-    window.localStorage.removeItem("token");
-    window.localStorage.removeItem("user");
+    auth.signOut();
     navigate("/");
   };
 
@@ -43,13 +55,19 @@ const Stemming = () => {
       alert("Selecteer eerst een stemming.");
     }
   };
-
   const handleConfirm = async () => {
+    if (!user) {
+      alert(
+        "Gebruikersinformatie niet gevonden. Probeer opnieuw in te loggen."
+      );
+      return;
+    }
+
     try {
       const docRef = await addDoc(collection(db, "stemmingen"), {
         mood: selectedMood.value,
         timestamp: serverTimestamp(),
-        userId: user.id,
+        userId: user.uid,
       });
       console.log("Document toegevoegd met ID: ", docRef.id);
       setSelectedMood(null);

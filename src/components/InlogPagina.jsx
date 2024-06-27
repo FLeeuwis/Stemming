@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
 import SpotifyWebApi from "spotify-web-api-js";
 
 const spotifyApi = new SpotifyWebApi();
@@ -10,7 +11,6 @@ const InlogPagina = () => {
   const auth_endpoint = "https://accounts.spotify.com/authorize";
   const response_type = "token";
   const [token, setToken] = useState("");
-  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -26,23 +26,23 @@ const InlogPagina = () => {
         window.location.hash = "";
         window.localStorage.setItem("token", token);
         setToken(token);
-        spotifyApi.setAccessToken(token);
+        authenticateWithSpotify(token);
       }
     } else if (token) {
       setToken(token);
-      spotifyApi.setAccessToken(token);
+      authenticateWithSpotify(token);
     }
   }, []);
 
   useEffect(() => {
-    if (token) {
-      navigate("/home");
-      spotifyApi.getMe().then((user) => {
-        setUser(user);
-        window.localStorage.setItem("user", JSON.stringify(user));
-      });
-    }
-  }, [token, navigate]);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigate("/home");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
 
   useEffect(() => {
     const addLightAnimation = () => {

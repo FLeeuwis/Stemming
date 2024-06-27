@@ -11,7 +11,7 @@ import SpotifyWebApi from "spotify-web-api-js";
 const spotifyApi = new SpotifyWebApi();
 
 // Functie om Spotify te authenticeren
-const authenticateWithSpotify = async (token) => {
+const authenticateWithSpotify = async (token, navigate) => {
   try {
     spotifyApi.setAccessToken(token);
     const userData = await spotifyApi.getMe();

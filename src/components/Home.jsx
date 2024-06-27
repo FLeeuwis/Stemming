@@ -85,7 +85,7 @@ const Home = () => {
       {/* chart en Spotify player sectie */}
       <div className="flex flex-1 p-4 space-x-4">
         <div className="w-full md:w-1/2 flex justify-center items-center">
-          <div className="relative h-96 w-full p-4 bg-white">
+          <div className="relative h-96 w-full flex justify-center items-center bg-white">
             <DataChart />
           </div>
         </div>

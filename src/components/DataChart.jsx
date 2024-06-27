@@ -184,7 +184,7 @@ const DataChart = () => {
     }
   }, [chartData]);
 
-  return <canvas id="myChart" width="400" height="400"></canvas>;
+  return <canvas id="myChart"></canvas>;
 };
 
 export default DataChart;

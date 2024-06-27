@@ -18,6 +18,7 @@ const authenticateWithSpotify = async (token) => {
     console.log("userdata: ", userData);
     // const customToken = await generateCustomToken(userData.id); // Genereer een custom token met een cloud function
     // await signInWithCustomToken(auth, customToken);
+    navigate("/home");
     return userData;
   } catch (error) {
     console.error("Error authenticating with Spotify:", error);

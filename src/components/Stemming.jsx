@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { db, auth } from "../firebase";
+import { db } from "../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 
 const moods = [
   { src: "/images/cryingSmiley.png", value: 1 },
@@ -21,22 +21,9 @@ const Stemming = () => {
   const navigate = useNavigate();
   const [selectedMood, setSelectedMood] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-      } else {
-        navigate("/");
-      }
-    });
-
-    return () => unsubscribe();
-  }, [navigate]);
 
   const handleLogout = () => {
-    auth.signOut();
+    window.localStorage.removeItem("token");
     navigate("/");
   };
 
@@ -55,28 +42,28 @@ const Stemming = () => {
       alert("Selecteer eerst een stemming.");
     }
   };
-  const handleConfirm = async () => {
-    if (!user) {
-      alert(
-        "Gebruikersinformatie niet gevonden. Probeer opnieuw in te loggen."
-      );
-      return;
-    }
 
+  const handleConfirm = async () => {
     try {
-      const docRef = await addDoc(collection(db, "stemmingen"), {
-        mood: selectedMood.value,
-        timestamp: serverTimestamp(),
-        userId: user.uid,
-      });
-      console.log("Document toegevoegd met ID: ", docRef.id);
-      setSelectedMood(null);
-      setIsPopupOpen(false);
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (user) {
+        const docRef = await addDoc(collection(db, "stemmingen"), {
+          uid: user.uid,
+          mood: selectedMood.value,
+          timestamp: serverTimestamp(),
+        });
+        console.log("Document toegevoegd met ID: ", docRef.id);
+        setSelectedMood(null);
+        setIsPopupOpen(false);
+        navigate("/home");
+      } else {
+        alert("Gebruiker is niet ingelogd.");
+      }
     } catch (error) {
       console.error("Error adding documents: ", error);
       alert("Er is een fout opgetreden bij het opslaan van de stemming.");
     }
-    navigate("/home");
   };
 
   const handleClosePopup = () => {

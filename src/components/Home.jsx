@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db, auth } from "../firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import DataChart from "./DataChart";
+import { collection, getDocs, where, query } from "firebase/firestore";
+import { db } from "../firebase";
 import SpotifyWebApi from "spotify-web-api-js";
+import { getAuth } from "firebase/auth";
 
 const spotifyApi = new SpotifyWebApi();
 
@@ -11,7 +12,7 @@ const moodToPlaylist = {
   1: "37i9dQZF1DWSsPOGuds90p", // cry playlist
   2: "4NX7OGpc4HVFYmB2hNcGpV", // angry playlist
   3: "1XE7rQIGl1NFtWEAfwn4b9", // frown playlist
-  4: "3TejicIfBAtllqAO6iOUgu", // wooz playlist
+  4: "3TejicIfBAtllqAO6iOUgu", //  wooz playlist
   5: "4R79MKLEDov4pzeNQP6RdP", // Calm playlist
   6: "37i9dQZF1DWYBO1MoTDhZI", // sunnies playlist
   7: "37i9dQZF1DX6QClArDhvcW", // sleepy playlist
@@ -24,52 +25,52 @@ const Home = () => {
   const navigate = useNavigate();
   const [latestMood, setLatestMood] = useState(null);
   const [spotifyTrack, setSpotifyTrack] = useState("");
-  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const fetchLatestMood = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
       if (user) {
-        setUser(user);
-        fetchLatestMood(user.uid);
-      } else {
-        navigate("/");
-      }
-    });
+        const q = query(
+          collection(db, "stemmingen"),
+          where("uid", "==", user.uid)
+        );
+        const querySnapshot = await getDocs(q);
+        const data = querySnapshot.docs.map((doc) => doc.data());
 
-    return () => unsubscribe();
+        if (data.length > 0) {
+          const latestMood = data.sort((a, b) => b.timestamp - a.timestamp)[0];
+          setLatestMood(latestMood.mood);
+
+          const playlistID = moodToPlaylist[latestMood.mood];
+          fetchRandomTrackFromPlaylist(playlistID);
+        }
+      }
+    };
+
+    const fetchRandomTrackFromPlaylist = async (playlistID) => {
+      try {
+        const response = await spotifyApi.getPlaylistTracks(playlistID);
+        const tracks = response.items;
+        const randomTrack =
+          tracks[Math.floor(Math.random() * tracks.length)].track.id;
+        setSpotifyTrack(randomTrack);
+      } catch (error) {
+        console.error("Error fetching tracks from Spotify:", error);
+      }
+    };
+
+    const accessToken = window.localStorage.getItem("token");
+    if (accessToken) {
+      spotifyApi.setAccessToken(accessToken);
+      fetchLatestMood();
+    } else {
+      navigate("/");
+    }
   }, [navigate]);
 
-  const fetchLatestMood = async (userId) => {
-    const moodsQuery = query(
-      collection(db, "stemmingen"),
-      where("userId", "==", userId)
-    );
-    const querySnapshot = await getDocs(moodsQuery);
-    const data = querySnapshot.docs.map((doc) => doc.data());
-
-    if (data.length > 0) {
-      const latestMood = data.sort((a, b) => b.timestamp - a.timestamp)[0];
-      setLatestMood(latestMood.mood);
-
-      const playlistID = moodToPlaylist[latestMood.mood];
-      fetchRandomTrackFromPlaylist(playlistID);
-    }
-  };
-
-  const fetchRandomTrackFromPlaylist = async (playlistID) => {
-    try {
-      const response = await spotifyApi.getPlaylistTracks(playlistID);
-      const tracks = response.items;
-      const randomTrack =
-        tracks[Math.floor(Math.random() * tracks.length)].track.id;
-      setSpotifyTrack(randomTrack);
-    } catch (error) {
-      console.error("Error fetching tracks from Spotify:", error);
-    }
-  };
-
   const handleLogout = () => {
-    auth.signOut();
+    window.localStorage.removeItem("token");
     navigate("/");
   };
 

@@ -1,9 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
+import { signInWithCustomToken } from "firebase/auth";
+import { auth } from "../firebase";
 import SpotifyWebApi from "spotify-web-api-js";
 
 const spotifyApi = new SpotifyWebApi();
+
+// Functie om Spotify te authenticeren
+const authenticateWithSpotify = async (token) => {
+  try {
+    spotifyApi.setAccessToken(token);
+    const userData = await spotifyApi.getMe();
+    const customToken = await generateCustomToken(userData.id); // Genereer een custom token met een cloud function
+    await signInWithCustomToken(auth, customToken);
+    return userData;
+  } catch (error) {
+    console.error("Error authenticating with Spotify:", error);
+  }
+};
 
 const InlogPagina = () => {
   const navigate = useNavigate();

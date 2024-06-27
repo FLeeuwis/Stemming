@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import {
   getAuth,
   onAuthStateChanged,
-  signInWithCustomToken,
-} from "firebase/auth";
+  signInWithEmailAndPassword,
+} from "firebase/auth"; // Gebruik Firebase Email/Password auth
 import { auth } from "../firebase";
 import SpotifyWebApi from "spotify-web-api-js";
 
@@ -16,9 +16,14 @@ const authenticateWithSpotify = async (token, navigate) => {
     spotifyApi.setAccessToken(token);
     const userData = await spotifyApi.getMe();
     console.log("UserData from Spotify:", userData);
-    // const customToken = await generateCustomToken(userData.id); // Uncomment if you have a function to generate a custom token
-    // await signInWithCustomToken(auth, customToken); // Uncomment if you have a custom token
-    navigate("/home"); // Navigate to home after successful authentication
+    // Tijdelijke Firebase authenticatie
+    signInWithEmailAndPassword(auth, "testuser@example.com", "password123")
+      .then(() => {
+        navigate("/home"); // Navigate to home after successful authentication
+      })
+      .catch((error) => {
+        console.error("Error signing in with Firebase:", error);
+      });
     return userData;
   } catch (error) {
     console.error("Error authenticating with Spotify:", error);

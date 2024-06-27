@@ -20,9 +20,11 @@ const Stemming = () => {
   const navigate = useNavigate();
   const [selectedMood, setSelectedMood] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const user = JSON.parse(window.localStorage.getItem("user"));
 
   const handleLogout = () => {
     window.localStorage.removeItem("token");
+    window.localStorage.removeItem("user");
     navigate("/");
   };
 
@@ -47,6 +49,7 @@ const Stemming = () => {
       const docRef = await addDoc(collection(db, "stemmingen"), {
         mood: selectedMood.value,
         timestamp: serverTimestamp(),
+        userId: user.id,
       });
       console.log("Document toegevoegd met ID: ", docRef.id);
       setSelectedMood(null);

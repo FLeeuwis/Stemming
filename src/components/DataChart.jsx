@@ -28,9 +28,8 @@ const DataChart = () => {
         setChartData(processedData);
       }
     };
-useEffect(() => {
-  fetchData();
-}, []);
+    fetchData();
+  }, []);
 
   const processData = (data) => {
     const daysOfWeek = [

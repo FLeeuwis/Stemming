@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  signInWithCustomToken,
-  getAuth,
-  onAuthStateChanged,
-} from "firebase/auth";
-import { auth } from "../firebase";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase"; // Zorg ervoor dat de paden correct zijn
 import SpotifyWebApi from "spotify-web-api-js";
 
 const spotifyApi = new SpotifyWebApi();
@@ -15,14 +11,15 @@ const authenticateWithSpotify = async (token, navigate) => {
   try {
     spotifyApi.setAccessToken(token);
     const userData = await spotifyApi.getMe();
-    console.log("userdata: ", userData);
+    console.log("UserData from Spotify:", userData);
     // const customToken = await generateCustomToken(userData.id); // Genereer een custom token met een cloud function
     // await signInWithCustomToken(auth, customToken);
-    navigate("/home");
+    navigate("/home"); // Navigate to home after successful authentication
     return userData;
   } catch (error) {
     console.error("Error authenticating with Spotify:", error);
-    if (error.resonse && error.response.status === 401) {
+    if (error.response && error.response.status === 401) {
+      // Token is expired
       window.localStorage.removeItem("token");
       window.location.href = "/";
     }
@@ -50,16 +47,17 @@ const InlogPagina = () => {
         window.location.hash = "";
         window.localStorage.setItem("token", token);
         setToken(token);
-        authenticateWithSpotify(token);
+        authenticateWithSpotify(token, navigate); // Geef navigate correct door
       }
     } else if (token) {
       setToken(token);
-      authenticateWithSpotify(token);
+      authenticateWithSpotify(token, navigate); // Geef navigate correct door
     }
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log("onAuthStateChanged user:", user);
       if (user) {
         navigate("/home");
       }
@@ -67,6 +65,20 @@ const InlogPagina = () => {
 
     return () => unsubscribe();
   }, [navigate]);
+
+  const handleLogout = () => {
+    console.log("Logout button clicked");
+    window.localStorage.removeItem("token");
+    auth
+      .signOut()
+      .then(() => {
+        console.log("User signed out");
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error("Error signing out: ", error);
+      });
+  };
 
   useEffect(() => {
     const addLightAnimation = () => {
@@ -157,18 +169,6 @@ const InlogPagina = () => {
     const authUrl = `${auth_endpoint}?client_id=${client_id}&redirect_uri=${encodedRedirectUri}&response_type=${response_type}`;
 
     window.location.href = authUrl;
-  };
-
-  const handleLogout = () => {
-    window.localStorage.removeItem("token");
-    auth
-      .signOut()
-      .then(() => {
-        navigate("/");
-      })
-      .catch((error) => {
-        console.error("Error signing out: ", error);
-      });
   };
 
   return (

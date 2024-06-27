@@ -15,8 +15,8 @@ const authenticateWithSpotify = async (token) => {
   try {
     spotifyApi.setAccessToken(token);
     const userData = await spotifyApi.getMe();
-    const customToken = await generateCustomToken(userData.id); // Genereer een custom token met een cloud function
-    await signInWithCustomToken(auth, customToken);
+    // const customToken = await generateCustomToken(userData.id); // Genereer een custom token met een cloud function
+    // await signInWithCustomToken(auth, customToken);
     return userData;
   } catch (error) {
     console.error("Error authenticating with Spotify:", error);

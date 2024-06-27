@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { db, auth } from "../firebase";
+import { db } from "../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
@@ -44,19 +44,13 @@ const Stemming = () => {
 
   const handleConfirm = async () => {
     try {
-      if (auth.currentUser) {
-        const uid = auth.currentUser.uid;
-        const docRef = await addDoc(collection(db, "stemmingen"), {
-          mood: selectedMood.value,
-          timestamp: serverTimestamp(),
-          uid: uid,
-        });
-        console.log("Document toegevoegd met ID: ", docRef.id);
-        setSelectedMood(null);
-        setIsPopupOpen(false);
-      } else {
-        alert("je meot inlogen");
-      }
+      const docRef = await addDoc(collection(db, "stemmingen"), {
+        mood: selectedMood.value,
+        timestamp: serverTimestamp(),
+      });
+      console.log("Document toegevoegd met ID: ", docRef.id);
+      setSelectedMood(null);
+      setIsPopupOpen(false);
     } catch (error) {
       console.error("Error adding documents: ", error);
       alert("Er is een fout opgetreden bij het opslaan van de stemming.");

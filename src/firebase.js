@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, OAuthProvider } from "firebase/auth";
 
 import {
   doc,
@@ -25,19 +24,9 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const spotifyProvider = new OAuthProvider("spotify.com");
 
 export default app;
 export const db = getFirestore(app);
-export const auth = getAuth(app);
+
 // Exporting everything that we need from firebase
-export {
-  doc,
-  onSnapshot,
-  addDoc,
-  collection,
-  query,
-  updateDoc,
-  deleteDoc,
-  spotifyProvider,
-};
+export { doc, onSnapshot, addDoc, collection, query, updateDoc, deleteDoc };

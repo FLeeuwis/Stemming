@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { db } from "../firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { db, auth } from "../firebase";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import Chart from "chart.js/auto";
 
 const DataChart = () => {
@@ -8,16 +8,21 @@ const DataChart = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const querySnapshot = await getDocs(collection(db, "stemmingen"));
-      const data = querySnapshot.docs.map((doc) => doc.data());
+      if (auth.currentUser) {
+        const uid = auth.currentUser.uid;
+        const q = query(collection(db, "stemmingen"), where("uid", "==", uid));
+        const querySnapshot = await getDocs(q);
+        const data = querySnapshot.docs.map((doc) => doc.data());
+        console.log("Fetched data from Firebase: ", data);
 
-      console.log("Fetched data from Firebase: ", data);
+        // Process the data for the chart
+        const processedData = processData(data);
+        console.log("Processed chart data: ", processedData);
 
-      // Process the data for the chart
-      const processedData = processData(data);
-      console.log("Processed chart data: ", processedData);
-
-      setChartData(processedData);
+        setChartData(processedData);
+      } else {
+        console.error("no usah");
+      }
     };
 
     fetchData();

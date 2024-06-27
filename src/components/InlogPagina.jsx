@@ -20,6 +20,10 @@ const authenticateWithSpotify = async (token) => {
     return userData;
   } catch (error) {
     console.error("Error authenticating with Spotify:", error);
+    if (error.resonse && error.response.status === 401) {
+      window.localStorage.removeItem("token");
+      window.location.href = "/";
+    }
   }
 };
 
@@ -153,6 +157,11 @@ const InlogPagina = () => {
     window.location.href = authUrl;
   };
 
+  const handleLogout = () => {
+    window.localStorage.removeItem("token");
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen grid grid-cols-5">
       {/* Paars gedeelte */}
@@ -182,6 +191,12 @@ const InlogPagina = () => {
           ) : (
             <div>
               <p>Je bent ingelogd met Spotify</p>
+              <button
+                onClick={handleLogout}
+                className="py-2 px-4 bg-[#3B3939] text-white font-trispace rounded-lg shadow-md hover:shadow-xl mt-4"
+              >
+                Logout
+              </button>
             </div>
           )}
         </div>

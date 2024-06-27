@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase"; // Zorg ervoor dat de paden correct zijn
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInWithCustomToken,
+} from "firebase/auth";
+import { auth } from "../firebase";
 import SpotifyWebApi from "spotify-web-api-js";
 
 const spotifyApi = new SpotifyWebApi();
@@ -12,8 +16,8 @@ const authenticateWithSpotify = async (token, navigate) => {
     spotifyApi.setAccessToken(token);
     const userData = await spotifyApi.getMe();
     console.log("UserData from Spotify:", userData);
-    // const customToken = await generateCustomToken(userData.id); // Genereer een custom token met een cloud function
-    // await signInWithCustomToken(auth, customToken);
+    // const customToken = await generateCustomToken(userData.id); // Uncomment if you have a function to generate a custom token
+    // await signInWithCustomToken(auth, customToken); // Uncomment if you have a custom token
     navigate("/home"); // Navigate to home after successful authentication
     return userData;
   } catch (error) {
@@ -47,11 +51,11 @@ const InlogPagina = () => {
         window.location.hash = "";
         window.localStorage.setItem("token", token);
         setToken(token);
-        authenticateWithSpotify(token, navigate); // Geef navigate correct door
+        authenticateWithSpotify(token, navigate);
       }
     } else if (token) {
       setToken(token);
-      authenticateWithSpotify(token, navigate); // Geef navigate correct door
+      authenticateWithSpotify(token, navigate);
     }
   }, [navigate]);
 
@@ -60,6 +64,8 @@ const InlogPagina = () => {
       console.log("onAuthStateChanged user:", user);
       if (user) {
         navigate("/home");
+      } else {
+        alert("Gebruiker is niet ingelogd.");
       }
     });
 

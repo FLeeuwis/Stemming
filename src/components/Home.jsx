@@ -1,10 +1,9 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DataChart from "./DataChart";
-import { collection, getDocs, where, query } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import SpotifyWebApi from "spotify-web-api-js";
-import { getAuth } from "firebase/auth";
 
 const spotifyApi = new SpotifyWebApi();
 
@@ -28,26 +27,17 @@ const Home = () => {
 
   useEffect(() => {
     const fetchLatestMood = async () => {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      if (user) {
-        const q = query(
-          collection(db, "stemmingen"),
-          where("uid", "==", user.uid)
-        );
-        const querySnapshot = await getDocs(q);
-        const data = querySnapshot.docs.map((doc) => doc.data());
+      const querySnapshot = await getDocs(collection(db, "stemmingen"));
+      const data = querySnapshot.docs.map((doc) => doc.data());
 
-        if (data.length > 0) {
-          const latestMood = data.sort((a, b) => b.timestamp - a.timestamp)[0];
-          setLatestMood(latestMood.mood);
+      if (data.length > 0) {
+        const latestMood = data.sort((a, b) => b.timestamp - a.timestamp)[0];
+        setLatestMood(latestMood.mood);
 
-          const playlistID = moodToPlaylist[latestMood.mood];
-          fetchRandomTrackFromPlaylist(playlistID);
-        }
+        const playlistID = moodToPlaylist[latestMood.mood];
+        fetchRandomTrackFromPlaylist(playlistID);
       }
     };
-
     const fetchRandomTrackFromPlaylist = async (playlistID) => {
       try {
         const response = await spotifyApi.getPlaylistTracks(playlistID);
@@ -59,7 +49,6 @@ const Home = () => {
         console.error("Error fetching tracks from Spotify:", error);
       }
     };
-
     const accessToken = window.localStorage.getItem("token");
     if (accessToken) {
       spotifyApi.setAccessToken(accessToken);

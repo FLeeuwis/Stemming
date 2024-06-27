@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
 
 import {
   doc,
@@ -28,6 +27,6 @@ const app = initializeApp(firebaseConfig);
 
 export default app;
 export const db = getFirestore(app);
-export const auth = getAuth(app);
+
 // Exporting everything that we need from firebase
 export { doc, onSnapshot, addDoc, collection, query, updateDoc, deleteDoc };

@@ -1,39 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  getAuth,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-} from "firebase/auth"; // Gebruik Firebase Email/Password auth
-import { auth } from "../firebase";
-import SpotifyWebApi from "spotify-web-api-js";
-
-const spotifyApi = new SpotifyWebApi();
-
-// Functie om Spotify te authenticeren
-const authenticateWithSpotify = async (token, navigate) => {
-  try {
-    spotifyApi.setAccessToken(token);
-    const userData = await spotifyApi.getMe();
-    console.log("UserData from Spotify:", userData);
-    // Tijdelijke Firebase authenticatie
-    signInWithEmailAndPassword(auth, "testuser@example.com", "password123")
-      .then(() => {
-        navigate("/home"); // Navigate to home after successful authentication
-      })
-      .catch((error) => {
-        console.error("Error signing in with Firebase:", error);
-      });
-    return userData;
-  } catch (error) {
-    console.error("Error authenticating with Spotify:", error);
-    if (error.response && error.response.status === 401) {
-      // Token is expired
-      window.localStorage.removeItem("token");
-      window.location.href = "/";
-    }
-  }
-};
 
 const InlogPagina = () => {
   const navigate = useNavigate();
@@ -56,40 +22,17 @@ const InlogPagina = () => {
         window.location.hash = "";
         window.localStorage.setItem("token", token);
         setToken(token);
-        authenticateWithSpotify(token, navigate);
       }
     } else if (token) {
       setToken(token);
-      authenticateWithSpotify(token, navigate);
     }
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log("onAuthStateChanged user:", user);
-      if (user) {
-        navigate("/home");
-      } else {
-        alert("Gebruiker is niet ingelogd.");
-      }
-    });
-
-    return () => unsubscribe();
-  }, [navigate]);
-
-  const handleLogout = () => {
-    console.log("Logout button clicked");
-    window.localStorage.removeItem("token");
-    auth
-      .signOut()
-      .then(() => {
-        console.log("User signed out");
-        navigate("/");
-      })
-      .catch((error) => {
-        console.error("Error signing out: ", error);
-      });
-  };
+    if (token) {
+      navigate("/home");
+    }
+  }, [token, navigate]);
 
   useEffect(() => {
     const addLightAnimation = () => {
@@ -211,12 +154,6 @@ const InlogPagina = () => {
           ) : (
             <div>
               <p>Je bent ingelogd met Spotify</p>
-              <button
-                onClick={handleLogout}
-                className="py-2 px-4 bg-[#3B3939] text-white font-trispace rounded-lg shadow-md hover:shadow-xl mt-4"
-              >
-                Logout
-              </button>
             </div>
           )}
         </div>

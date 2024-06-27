@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { db } from "../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { getAuth } from "firebase/auth";
 
 const moods = [
   { src: "/images/cryingSmiley.png", value: 1 },
@@ -45,25 +44,18 @@ const Stemming = () => {
 
   const handleConfirm = async () => {
     try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      if (user) {
-        const docRef = await addDoc(collection(db, "stemmingen"), {
-          uid: user.uid,
-          mood: selectedMood.value,
-          timestamp: serverTimestamp(),
-        });
-        console.log("Document toegevoegd met ID: ", docRef.id);
-        setSelectedMood(null);
-        setIsPopupOpen(false);
-        navigate("/home");
-      } else {
-        alert("Gebruiker is niet ingelogd.");
-      }
+      const docRef = await addDoc(collection(db, "stemmingen"), {
+        mood: selectedMood.value,
+        timestamp: serverTimestamp(),
+      });
+      console.log("Document toegevoegd met ID: ", docRef.id);
+      setSelectedMood(null);
+      setIsPopupOpen(false);
     } catch (error) {
       console.error("Error adding documents: ", error);
       alert("Er is een fout opgetreden bij het opslaan van de stemming.");
     }
+    navigate("/home");
   };
 
   const handleClosePopup = () => {

@@ -1,33 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import Chart from "chart.js/auto";
-import { getAuth } from "firebase/auth";
 
 const DataChart = () => {
   const [chartData, setChartData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      if (user) {
-        const q = query(
-          collection(db, "stemmingen"),
-          where("uid", "==", user.uid)
-        );
-        const querySnapshot = await getDocs(q);
-        const data = querySnapshot.docs.map((doc) => doc.data());
+      const querySnapshot = await getDocs(collection(db, "stemmingen"));
+      const data = querySnapshot.docs.map((doc) => doc.data());
 
-        console.log("Fetched data from Firebase: ", data);
+      console.log("Fetched data from Firebase: ", data);
 
-        // Process the data for the chart
-        const processedData = processData(data);
-        console.log("Processed chart data: ", processedData);
+      // Process the data for the chart
+      const processedData = processData(data);
+      console.log("Processed chart data: ", processedData);
 
-        setChartData(processedData);
-      }
+      setChartData(processedData);
     };
+
     fetchData();
   }, []);
 
